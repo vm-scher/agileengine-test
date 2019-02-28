@@ -20,9 +20,9 @@ public class Application {
         String changedFile = requireNonNull(args[1], "input_other_sample_file_path required at position 1");
         String elementId = args.length == 3 ? args[2] : ORIGINAL_OK_BUTTON_ID;
 
-        Document originalDoc = HtmlLookupUtil.parseHtml(Paths.get(originalFile));
-        Document changedDoc = HtmlLookupUtil.parseHtml(Paths.get(changedFile));
-        Element originalElement = originalDoc.getElementById(elementId);
+        Document originalDoc = requireNonNull(HtmlLookupUtil.parseHtml(Paths.get(originalFile)), "cannot find original");
+        Document changedDoc = requireNonNull(HtmlLookupUtil.parseHtml(Paths.get(changedFile)), "cannot find changed sample file");
+        Element originalElement = requireNonNull(originalDoc.getElementById(elementId), "cannot find target element by ID in original file");
         Element foundElement = HtmlLookupUtil.findFuzzyElementByAttributes(changedDoc, originalElement.attributes().asList());
 
         System.out.println();
