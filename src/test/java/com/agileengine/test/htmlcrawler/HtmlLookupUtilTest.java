@@ -14,7 +14,7 @@ public class HtmlLookupUtilTest {
 
     private static final Path SAMPLE_DIR_PATH = Paths.get("src", "test", "resources");
     private static final String ORIGINAL_SAMPLE_0_HTML = "sample-0-origin.html";
-    private static final String ORIGINAL_OK_BUTTON_CSS_SELECTOR = String.format("#%s", "make-everything-ok-button");
+    private static final String ORIGINAL_OK_BUTTON_ID = "make-everything-ok-button";
 
     @Test
     public void testHtmlCrawler_1_evilGemini() {
@@ -51,7 +51,7 @@ public class HtmlLookupUtilTest {
     private void testHtmlCrawler(String changedFileName, String expectedCssSelector) {
         Document originalDoc = HtmlLookupUtil.parseHtml(SAMPLE_DIR_PATH.resolve(HtmlLookupUtilTest.ORIGINAL_SAMPLE_0_HTML));
         Document changedDoc = HtmlLookupUtil.parseHtml(SAMPLE_DIR_PATH.resolve(changedFileName));
-        Element originalElement = CollectionUtil.getSingleElement(originalDoc.select(ORIGINAL_OK_BUTTON_CSS_SELECTOR));
+        Element originalElement = originalDoc.getElementById(ORIGINAL_OK_BUTTON_ID);
         Element foundElement = HtmlLookupUtil.findFuzzyElementByAttributes(changedDoc, originalElement.attributes().asList());
 
         assertThat(foundElement.cssSelector(), is(expectedCssSelector));

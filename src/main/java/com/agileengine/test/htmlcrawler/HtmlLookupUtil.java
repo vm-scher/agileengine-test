@@ -10,6 +10,7 @@ import org.jsoup.nodes.Element;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.util.AbstractMap;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.List;
 import java.util.Objects;
@@ -32,17 +33,24 @@ public class HtmlLookupUtil {
         if (keyAttributes == null || keyAttributes.isEmpty()) {
             throw new IllegalArgumentException("keyAttributes should be specified");
         }
-        return document.getAllElements()
+        SimpleEntry<Element, List<Attribute>> foundEntry = document.getAllElements()
                 .stream()
                 .map(e -> new SimpleEntry<>(e, innerJoin(e.attributes().asList(), keyAttributes)))
                 .max(comparingInt(entry -> entry.getValue().size()))
-                .map(SimpleEntry::getKey)
                 .orElseThrow(() -> new ElementNotFoundException(joinAttributes(keyAttributes)));
+        traceAttributes(keyAttributes, foundEntry);
+        return foundEntry.getKey();
+    }
+
+    private static void traceAttributes(List<Attribute> keyAttributes, SimpleEntry<Element, List<Attribute>> foundEntry) {
+        System.out.println("     Key attributes: " + joinAttributes(keyAttributes));
+        System.out.println("   Found attributes: " + joinAttributes(foundEntry.getValue()));
+        System.out.println("  Common attributes: " + joinAttributes(innerJoin(keyAttributes, foundEntry.getValue())));
     }
 
     private static String joinAttributes(List<Attribute> keyAttributes) {
         return keyAttributes.stream()
                 .map(Attribute::toString)
-                .collect(joining());
+                .collect(joining(", "));
     }
 }
