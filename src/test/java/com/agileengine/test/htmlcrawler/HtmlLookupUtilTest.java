@@ -1,18 +1,11 @@
 package com.agileengine.test.htmlcrawler;
 
-import com.agileengine.test.htmlcrawler.exception.ElementNotFoundException;
-import lombok.SneakyThrows;
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.junit.Test;
 
-import java.io.File;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Iterator;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -56,17 +49,12 @@ public class HtmlLookupUtilTest {
     }
 
     private void testHtmlCrawler(String changedFileName, String expectedCssSelector) {
-        Document originalDoc = parseHtml(SAMPLE_DIR_PATH.resolve(HtmlLookupUtilTest.ORIGINAL_SAMPLE_0_HTML));
-        Document changedDoc = parseHtml(SAMPLE_DIR_PATH.resolve(changedFileName));
+        Document originalDoc = HtmlLookupUtil.parseHtml(SAMPLE_DIR_PATH.resolve(HtmlLookupUtilTest.ORIGINAL_SAMPLE_0_HTML));
+        Document changedDoc = HtmlLookupUtil.parseHtml(SAMPLE_DIR_PATH.resolve(changedFileName));
         Element originalElement = CollectionUtil.getSingleElement(originalDoc.select(ORIGINAL_OK_BUTTON_CSS_SELECTOR));
         Element foundElement = HtmlLookupUtil.findFuzzyElementByAttributes(changedDoc, originalElement.attributes().asList());
 
         assertThat(foundElement.cssSelector(), is(expectedCssSelector));
-    }
-
-    @SneakyThrows
-    private static Document parseHtml(Path originalHtml) {
-        return Jsoup.parse(new File(originalHtml.toUri()), StandardCharsets.UTF_8.name());
     }
 
 }
